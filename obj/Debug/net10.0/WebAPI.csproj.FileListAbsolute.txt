@@ -31,3 +31,4 @@
 /home/workstation/Desktop/C#/WebAPI/obj/Debug/net10.0/WebAPI.pdb
 /home/workstation/Desktop/C#/WebAPI/obj/Debug/net10.0/WebAPI.genruntimeconfig.cache
 /home/workstation/Desktop/C#/WebAPI/obj/Debug/net10.0/ref/WebAPI.dll
+/home/workstation/Desktop/C#/WebAPI/obj/Debug/net10.0/WebAPI.sourcelink.json

@@ -4,17 +4,21 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
+//In-memory data storage for categories
 List<Category> categories = new List<Category>();
 
 //API Endpoints for Categories
+
+//GET all data
 app.MapGet("/api/categories", () =>
 {
     return Results.Ok(categories);
 });
 
-app.MapGet("/api/category", () =>
+//GET data by ID
+app.MapGet("/api/categories/{id}", (Guid id) =>
 {
-    var category = categories.FirstOrDefault(categories => categories.CategoryId == Guid.Parse("73027d9f-be04-48a4-a17d-34bbb56cda09"));
+    var category = categories.FirstOrDefault(categories => categories.CategoryId == id);
 
     if (category == null)
     {
@@ -24,13 +28,14 @@ app.MapGet("/api/category", () =>
     return Results.Ok(category);
 });
 
-app.MapPost("/api/categories", () =>
+//Create data
+app.MapPost("/api/categories", (Category category) =>
 {
     var newCategory = new Category
     {
         CategoryId = Guid.NewGuid(),
-        Name = "Electronics",
-        Description = "New Devices",
+        Name = category.Name,
+        Description = category.Description,
         CreatedAt = DateTime.UtcNow
     };
 
@@ -39,25 +44,29 @@ app.MapPost("/api/categories", () =>
     return Results.Created($"/api/categories/{newCategory.CategoryId}", newCategory);
 });
 
-app.MapPut("/api/categories", () =>
+//Update data
+app.MapPut("/api/categories/{id}", (Guid id, Category category) =>
 {
-    var categoryToUpdate = categories.FirstOrDefault(categories => categories.CategoryId == Guid.Parse("f6f6f4fb-1b1e-42da-84b2-660748c00c2c"));
+    var categoryToUpdate = categories.FirstOrDefault(categories => categories.CategoryId == id);
 
     if (categoryToUpdate == null)
     {
         return Results.NotFound("Category Id Not Found");
     }
 
-    categoryToUpdate.Name = "Updated Electronics";
-    categoryToUpdate.Description = "Updated New Devives";
+    categoryToUpdate.Name = category.Name;
+    categoryToUpdate.Description = category.Description;
     categoryToUpdate.CreatedAt = DateTime.UtcNow;
 
     return Results.Ok(categoryToUpdate);
 });
 
-app.MapDelete("/api/categories", () =>
+//Delete data
+app.MapDelete("/api/categories/{id}", (Guid id) =>
 {
-    var categoryToDelete = categories.FirstOrDefault(categories => categories.CategoryId == Guid.Parse("90f5c03f-67e8-468a-bccb-cfa70c4ea0a2"));
+    Console.WriteLine(id);
+
+    var categoryToDelete = categories.FirstOrDefault(categories => categories.CategoryId == id);
 
     if (categoryToDelete == null)
     {
@@ -72,6 +81,7 @@ app.MapDelete("/api/categories", () =>
 
 app.Run();
 
+//Category Model
 public record Category
 {
     public Guid CategoryId { get; set; }
