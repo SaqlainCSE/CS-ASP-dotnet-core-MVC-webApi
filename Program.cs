@@ -15,6 +15,24 @@ app.MapGet("/api/categories", () =>
     return Results.Ok(categories);
 });
 
+//GET data by Search
+app.MapGet("/api/categories/search", (string? search) =>
+{
+
+    if (string.IsNullOrEmpty(search))
+    {
+        Console.WriteLine(search);
+        return Results.Ok("Data Not Found");
+    }
+
+    var filteredData = categories.Where(data =>
+        (data.Name != null && data.Name.Contains(search, StringComparison.OrdinalIgnoreCase)) ||
+        (data.Description != null && data.Description.Contains(search, StringComparison.OrdinalIgnoreCase))
+    ).ToList();
+
+    return Results.Ok(filteredData);
+});
+
 //GET data by ID
 app.MapGet("/api/categories/{id}", (Guid id) =>
 {
