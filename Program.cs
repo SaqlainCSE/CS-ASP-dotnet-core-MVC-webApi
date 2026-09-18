@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Primitives;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
@@ -47,13 +49,18 @@ app.MapGet("/api/categories/{id}", (Guid id) =>
 });
 
 //Create data
-app.MapPost("/api/categories", (Category category) =>
+app.MapPost("/api/categories", (Category request) =>
 {
+    if (string.IsNullOrEmpty(request.Name) || request.Name.Length < 2)
+    {
+        return Results.BadRequest("Category Name is required or must be atleast 2 characters long!"); 
+    }
+    
     var newCategory = new Category
     {
         CategoryId = Guid.NewGuid(),
-        Name = category.Name,
-        Description = category.Description,
+        Name = request.Name,
+        Description = request.Description,
         CreatedAt = DateTime.UtcNow
     };
 
@@ -63,7 +70,7 @@ app.MapPost("/api/categories", (Category category) =>
 });
 
 //Update data
-app.MapPut("/api/categories/{id}", (Guid id, Category category) =>
+app.MapPut("/api/categories/{id}", (Guid id, Category request) =>
 {
     var categoryToUpdate = categories.FirstOrDefault(categories => categories.CategoryId == id);
 
@@ -72,8 +79,8 @@ app.MapPut("/api/categories/{id}", (Guid id, Category category) =>
         return Results.NotFound("Category Id Not Found");
     }
 
-    categoryToUpdate.Name = category.Name;
-    categoryToUpdate.Description = category.Description;
+    categoryToUpdate.Name = request.Name;
+    categoryToUpdate.Description = request.Description;
     categoryToUpdate.CreatedAt = DateTime.UtcNow;
 
     return Results.Ok(categoryToUpdate);
@@ -104,9 +111,9 @@ public record Category
 {
     public Guid CategoryId { get; set; }
 
-    public string? Name { get; set; }
+    public string Name { get; set; }
 
-    public string? Description { get; set; }
+    public string? Description { get; set; } = String.Empty;
 
     public DateTime CreatedAt { get; set; }
 };
