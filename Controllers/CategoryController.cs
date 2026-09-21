@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.DTOs;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
@@ -14,7 +15,15 @@ namespace WebAPI.Controllers
         [HttpGet]
         public IActionResult GetAllCategories()
         {
-            var allCategories = categories;
+            var allCategories = categories.Select(categories => new CategoryReadDto
+            {
+                Id = categories.Id,
+                Name = categories.Name,
+                Description = categories.Description,
+                CreatedAt = DateTime.UtcNow
+
+            }).ToList();
+
             return Ok(allCategories);
         }
 
@@ -49,9 +58,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCategory(Category request)
+        public IActionResult CreateCategory(CategoryCreateDto request)
         {
-            var category = new Category
+            var newCategory = new Category
             {
                 Id = Guid.NewGuid(),
                 Name = request.Name,
@@ -59,11 +68,18 @@ namespace WebAPI.Controllers
                 CreatedAt = DateTime.UtcNow
             };
 
-            categories.Add(category);
+            categories.Add(newCategory);
 
-            return Ok(category);
+            var CategoryReadDto = new CategoryReadDto
+            {
+                Id = newCategory.Id,
+                Name = newCategory.Name,
+                Description = newCategory.Description,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            return Ok(CategoryReadDto);
         }
-
 
         [HttpDelete("{id}")]
         public IActionResult DeleteCategory(Guid id)
@@ -81,7 +97,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateCategory(Guid id, Category request)
+        public IActionResult UpdateCategory(Guid id, CategoryUpdateDto request)
         {
             var UpdateCategory = categories.FirstOrDefault(categories => categories.Id == id);
 
