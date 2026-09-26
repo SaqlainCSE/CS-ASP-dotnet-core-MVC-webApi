@@ -70,7 +70,7 @@ namespace WebAPI.Controllers
 
             categories.Add(newCategory);
 
-            var CategoryReadDto = new CategoryReadDto
+            var CategoryRead = new CategoryReadDto
             {
                 Id = newCategory.Id,
                 Name = newCategory.Name,
@@ -78,7 +78,7 @@ namespace WebAPI.Controllers
                 CreatedAt = DateTime.UtcNow
             };
 
-            return Ok(CategoryReadDto);
+            return Ok(CategoryRead);
         }
 
         [HttpDelete("{id}")]
