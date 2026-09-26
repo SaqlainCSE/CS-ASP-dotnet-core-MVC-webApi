@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs;
 using WebAPI.Models;
@@ -38,7 +39,15 @@ namespace WebAPI.Controllers
                 return NotFound("Data not found");
             }
 
-            return Ok(category);
+            var categoryData = new CategoryReadDto
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description,
+                CreatedAt = category.CreatedAt
+            };
+
+            return Ok(categoryData);
         }
 
         //Get data by search
@@ -106,14 +115,21 @@ namespace WebAPI.Controllers
                 return BadRequest("Data not found");
             }
 
+            UpdateCategory.Name = request.Name;
+            UpdateCategory.Description = request.Description;
+
 
             // Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(UpdateCategory)); //debugging...
 
-            UpdateCategory.Name = request.Name;
-            UpdateCategory.Description = request.Description;
-            UpdateCategory.CreatedAt = DateTime.UtcNow;
+            var CategoryReadDto = new CategoryReadDto
+            {
+                Name = UpdateCategory.Name,
+                Description = UpdateCategory.Description
+            };
 
-            return Ok(UpdateCategory);
+            
+
+            return Ok(CategoryReadDto);
         }
     
     }
